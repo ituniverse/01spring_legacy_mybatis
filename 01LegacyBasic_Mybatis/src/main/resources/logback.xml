@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+ 
+    <!-- to use external setting files -->
+    <property resource="resource.properties"/>
+    
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_HOME}/sujemall-webapp.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- file is created every day. -->
+            <fileNamePattern>sujemall-webapp.%d{yyyy-MM-dd}.log</fileNamePattern>
+ 
+            <!-- follow the rollingPolicy. The file is deleted per 30days -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+ 
+    <logger name="org.springframework" level="info"/>
+    <if condition='property("RUN_MODE").equals("SERVICE")'>
+        <then>
+            <!-- if RUN_MODE is 'SERVICE', the log level is info -->
+            <root level="info">
+                <appender-ref ref="console"/>
+                <appender-ref ref="FILE"/>
+            </root>
+        </then>
+        <!-- if RUN_MODE is not 'SERVICE', the log level is debug -->
+        <else>
+            <root level="debug">
+                <appender-ref ref="console"/>
+                <appender-ref ref="FILE"/>
+            </root>
+        </else>
+    </if>
+</configuration>
